@@ -61,16 +61,16 @@ class HashTable:
             self.storage[index] = LinkedPair(key, value)
         # else return error saying naming collision
         else:
-            # TODO: handle collision with LinkedPair
-            # print(f"Naming collision at {index} index")
             # create a new linked pair
             new_node = LinkedPair(key, value)
-            for node in self.storage:
-                # find the last item in the linked list
-                if node is not None and node.next is None:
-                    # reassign self.next to the new linked pair
-                    node.next = new_node
-                    # TODO handling for when there's mulitple collisions
+            # go to that index of the list
+            last_item = self.storage[index]
+            # find last item in linked list
+            while last_item.next is not None:
+                last_item = last_item.next
+            # once it's none you've found the last item
+            # set the last's node's next field to the new node
+            last_item.next = new_node
 
     def remove(self, key):
         '''
@@ -98,13 +98,13 @@ class HashTable:
             # and the key matches
             if item.key == key:
                 # return item at index in storage
-                return item
+                return item.value
             else:
                 # print(f"Warning: collision at {index}")
                 cur_item = item.next
                 while cur_item is not None:
                     if cur_item.key == key:
-                        return cur_item
+                        return cur_item.value
                     cur_item = cur_item.next
                 # handle if it's never found
         else:
@@ -126,8 +126,13 @@ class HashTable:
         # insert each item that is not None from old storage into storage
 
         for item in old_storage:
-            if item is not None:
+            if item is not None and item.next is None:
                 self.insert(item.key, item.value)
+            elif item is not None:
+                cur_item = item.next
+                while cur_item is not None:
+                    self.insert(item.key, item.value)
+                    cur_item = cur_item.next
 
 
 if __name__ == "__main__":
@@ -144,16 +149,16 @@ if __name__ == "__main__":
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
 
-    # # Test resizing
-    # old_capacity = len(ht.storage)
-    # ht.resize()
-    # new_capacity = len(ht.storage)
+    # Test resizing
+    old_capacity = len(ht.storage)
+    ht.resize()
+    new_capacity = len(ht.storage)
 
-    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-    # # Test if data intact after resizing
-    # print(ht.retrieve("line_1"))
-    # print(ht.retrieve("line_2"))
-    # print(ht.retrieve("line_3"))
+    # Test if data intact after resizing
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
-    # print("")
+    print("")
