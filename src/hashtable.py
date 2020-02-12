@@ -56,20 +56,24 @@ class HashTable:
         '''
         # hash the key
         index = self._hash_mod(key)
+
         # if the index of storage is None, insert the (key, value) pair at that index
         if self.storage[index] is None:
             self.storage[index] = LinkedPair(key, value)
-        # else return error saying naming collision
+        # elif the key already exists at the head of LL, replace the value
+        elif self.storage[index].key == key:
+            self.storage[index].value = value
         else:
-            # create a new linked pair
-            new_node = LinkedPair(key, value)
             # go to that index of the list
             last_item = self.storage[index]
-            # find last item in linked list
-            while last_item.next is not None:
+            # iterate the linked list and check for last items and key matches
+            while last_item.next is not None and last_item.key != key:
                 last_item = last_item.next
-            # once it's none you've found the last item
-            # set the last's node's next field to the new node
+            # if the key matches, replace the value
+            if last_item.key == key:
+                last_item.value = value
+            # otherwise create a new linked pair and set it as the last item
+            new_node = LinkedPair(key, value)
             last_item.next = new_node
 
     def remove(self, key):
@@ -80,7 +84,24 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # hash the key
+        index = self._hash_mod(key)
+        item = self.storage[index]
+        # if the index is not empty
+        if item is not None:
+            # and the key matches
+            if item.key == key:
+                # assign the item's value to None
+                item.value = None
+            else:
+                cur_item = item.next
+                while cur_item is not None:
+                    if cur_item.key == key:
+                        cur_item.value = None
+                    cur_item = cur_item.next
+                # handle if it's never found
+        else:
+            print("Key not found")
 
     def retrieve(self, key):
         '''
