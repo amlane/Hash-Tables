@@ -147,13 +147,17 @@ class HashTable:
         # insert each item that is not None from old storage into storage
 
         for item in old_storage:
+            # if the head is the only item, just insert that one
             if item is not None and item.next is None:
                 self.insert(item.key, item.value)
-            elif item is not None:
-                cur_item = item.next
-                while cur_item is not None:
-                    self.insert(item.key, item.value)
+            # if there's a LL, iterate over it and insert each item
+            if item is not None and item.next is not None:
+                cur_item = item
+                while cur_item.next is not None:
+                    self.insert(cur_item.key, cur_item.value)
                     cur_item = cur_item.next
+                # don't forget the last little guy!
+                self.insert(cur_item.key, cur_item.value)
 
 
 if __name__ == "__main__":
